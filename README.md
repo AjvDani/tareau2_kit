@@ -1,6 +1,6 @@
 # Tarea U2 · Caso 7 Veterinaria · PostgreSQL + MongoDB
 
-**Estudiante:** José Villa · **Caso:** 7 · Veterinaria
+**Estudiante:** José Villa · **Caso:** 7 · Veterinaria · [Video de sustentación](https://drive.google.com/file/d/1vN2-40DsPz_SI3ChwxEqr2ErIWJA84wm/view?usp=sharing)
 
 API REST en Express que combina **PostgreSQL (Prisma 7)** y **MongoDB (Mongoose 9)**.
 Parte del proyecto de clase [`espe-expressjs`](https://github.com/paulosk8/espe-expressjs) (Express, Prisma y login con JWT).
@@ -67,16 +67,12 @@ Colección: [`postman/TareaU2_Villa.postman_collection.json`](postman/TareaU2_Vi
 (35 peticiones, 55 aserciones). Crea sus propios datos con un sufijo aleatorio y los borra al final, así que
 se puede correr varias veces seguidas. Desde consola: `npm run test:postman`. Salida de una corrida: `docs/newman_run.txt`.
 
-## Evidencia pendiente (la hace el estudiante)
+## Evidencia
 
-- [x] `docs/postman_run.png` y `docs/postman_run_order.png`: Run collection en Postman (55 de 55 aserciones).
-- [x] `docs/compass_colecciones.png`, `docs/compass_followupnotes.png` y `docs/compass_indices.png`: colecciones
-      `treatments`, `followupnotes` y sus índices (`consultationId_1_noteDay_1` único).
-- [x] `docs/pgadmin_treatmentId.png`: tabla `Consultation` con la columna `treatmentId` (el `_id` de MongoDB).
-- [ ] Video (≤ 5 min, cara y voz), guion sugerido:
-  1. Workload: la operación *"Registrar nota de seguimiento"* (~330/día, crece sin límite) → por qué va a MongoDB
-     y la consulta se queda en PostgreSQL (FK a User, una mascota no tiene dos consultas a la misma hora).
-  2. `POST /api/notes`: `src/services/followUpNoteService.js` (404 → 403 → copia `petName`/`species` → `userId` del JWT)
-     y en Postman las peticiones 22 a 25 (201, 409, 404, 403).
-  3. Fallo a la mitad: sección 8 del documento de modelado (orden de los pasos y qué queda si cae la segunda base).
-- [ ] `git tag u2-tarea && git push origin u2-tarea` antes de la fecha de cierre.
+- **Video de sustentación:** https://drive.google.com/file/d/1vN2-40DsPz_SI3ChwxEqr2ErIWJA84wm/view?usp=sharing
+  (workload y decisión de base · `POST /api/notes` en el código y en Postman · qué pasa si una base falla a la mitad).
+- `docs/postman_run.png` y `docs/postman_run_order.png`: Run collection en Postman (55 de 55 aserciones).
+- `docs/compass_colecciones.png`, `docs/compass_followupnotes.png` y `docs/compass_indices.png`: colecciones
+  `treatments`, `followupnotes` y sus índices (`consultationId_1_noteDay_1` único).
+- `docs/pgadmin_treatmentId.png`: tabla `Consultation` con la columna `treatmentId` (el `_id` de MongoDB).
+- Versión entregada: etiqueta `u2-tarea`.
