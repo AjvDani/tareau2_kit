@@ -1,4 +1,6 @@
-# Contenedores del proyecto espe-expressjs para la Unidad 2.
+# Contenedores de la Tarea U2 · Caso 7 Veterinaria (basado en el kit de espe-expressjs).
+# Nombres y puertos propios para no chocar con los contenedores espe-* del proyecto de clase:
+#   PostgreSQL → localhost:5435 · pgAdmin → http://localhost:5052 · MongoDB → localhost:27018
 # PostgreSQL + pgAdmin (Unidad 1) y MongoDB (Unidad 2).
 # MongoDB Compass se instala en la PC y se conecta al contenedor "mongo".
 #
@@ -9,51 +11,52 @@
 services:
   postgres:
     image: postgres:17-alpine
-    container_name: espe-postgres
+    container_name: vet-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: espe_user
       POSTGRES_PASSWORD: espe_password
-      POSTGRES_DB: espe_db
+      POSTGRES_DB: vet_db
     ports:
-      - "5432:5432"
+      - "5435:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U espe_user -d espe_db"]
+      test: ["CMD-SHELL", "pg_isready -U espe_user -d vet_db"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   pgadmin:
     image: dpage/pgadmin4:9
-    container_name: espe-pgadmin
+    container_name: vet-pgadmin
     restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@espe.com
       PGADMIN_DEFAULT_PASSWORD: admin_password
     ports:
-      - "5050:80"
+      - "5052:80"
     volumes:
       - pgadmin_data:/var/lib/pgadmin
+      # Registra el servidor vet-postgres al iniciar (solo pide la contraseña).
+      - ./docker/pgadmin/servers.json:/pgadmin4/servers.json:ro
     depends_on:
       postgres:
         condition: service_healthy
 
   mongo:
     image: mongo:8
-    container_name: espe-mongo
+    container_name: vet-mongo
     restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: espe_user
       MONGO_INITDB_ROOT_PASSWORD: espe_password
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - mongo_data:/data/db
     healthcheck:
-      test:
-        ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
       interval: 10s
       timeout: 5s
       retries: 5

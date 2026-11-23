@@ -1,0 +1,183 @@
+newman
+
+TareaU2 · Caso 7 Veterinaria (PostgreSQL + MongoDB)
+
+→ 00 Registrar dueño 1
+  POST http://localhost:3000/api/auth/register [201 Created, 282B, 114ms]
+  √  Status 201
+
+→ 01 Login dueño 1
+  POST http://localhost:3000/api/auth/login [200 OK, 404B, 73ms]
+  √  Login 200 con token
+
+→ 02 Registrar dueño 2
+  POST http://localhost:3000/api/auth/register [201 Created, 282B, 78ms]
+  √  Status 201
+
+→ 03 Login dueño 2
+  POST http://localhost:3000/api/auth/login [200 OK, 404B, 96ms]
+  √  Login dueño 2 = 200
+
+→ 04 Crear tratamiento sin token → 401
+  POST http://localhost:3000/api/treatments [401 Unauthorized, 289B, 3ms]
+  √  Status 401
+
+→ 05 Crear tratamiento inválido → 400
+  POST http://localhost:3000/api/treatments [400 Bad Request, 514B, 5ms]
+  √  Status 400
+  √  Mensajes de validación en español
+
+→ 06 Crear tratamiento A (perro y gato) → 201
+  POST http://localhost:3000/api/treatments [201 Created, 994B, 6ms]
+  √  Status 201
+  √  pre(validate): código en mayúsculas y slug
+  √  Virtual speciesCovered
+
+→ 07 Crear tratamiento B (solo perro) → 201
+  POST http://localhost:3000/api/treatments [201 Created, 831B, 6ms]
+  √  Status 201
+
+→ 08 Crear tratamiento con código repetido → 409
+  POST http://localhost:3000/api/treatments [409 Conflict, 302B, 7ms]
+  √  Código único → 409 (E11000)
+
+→ 09 Listar con regex, proyección y orden
+  GET http://localhost:3000/api/treatments?q=63239779&fields=name,code&sort=name [200 OK, 437B, 5ms]
+  √  Status 200
+  √  Regex encuentra los 2 tratamientos de esta corrida
+  √  Proyección: solo name y code
+  √  Orden por nombre ascendente
+
+→ 10 Obtener tratamiento A por id
+  GET http://localhost:3000/api/treatments/6b045b51132ae14676ce9228 [200 OK, 989B, 6ms]
+  √  Status 200
+  √  Virtual summary
+
+→ 11 Obtener con id inválido → 400
+  GET http://localhost:3000/api/treatments/no-es-un-id [400 Bad Request, 303B, 2ms]
+  √  Status 400
+
+→ 12 Obtener id inexistente → 404
+  GET http://localhost:3000/api/treatments/000000000000000000000000 [404 Not Found, 279B, 4ms]
+  √  Status 404
+
+→ 13 PUT tratamiento A (findById + save) → 200
+  PUT http://localhost:3000/api/treatments/6b045b51132ae14676ce9228 [200 OK, 1.1kB, 8ms]
+  √  Status 200
+  √  Se agregó la dosis de conejo
+
+→ 14 PUT inválido → 400
+  PUT http://localhost:3000/api/treatments/6b045b51132ae14676ce9228 [400 Bad Request, 326B, 6ms]
+  √  Status 400
+  √  Mensaje de dosis mínima
+
+→ 15 Crear consulta con treatmentId inválido → 400
+  POST http://localhost:3000/api/consultations [400 Bad Request, 301B, 3ms]
+  √  isValidObjectId → 400
+
+→ 16 Crear consulta con tratamiento inexistente → 404
+  POST http://localhost:3000/api/consultations [404 Not Found, 294B, 5ms]
+  √  exists → 404
+
+→ 17 Crear consulta: tratamiento sin dosis para gato → 400
+  POST http://localhost:3000/api/consultations [400 Bad Request, 317B, 6ms]
+  √  Status 400
+  √  La dosis depende de la especie
+
+→ 18 Crear consulta válida → 201
+  POST http://localhost:3000/api/consultations [201 Created, 782B, 14ms]
+  √  Status 201
+  √  Guarda el _id de MongoDB como String
+  √  Devuelve la dosis de la especie
+
+→ 19 Crear consulta duplicada (misma mascota y fecha) → 409
+  POST http://localhost:3000/api/consultations [409 Conflict, 305B, 9ms]
+  √  Status 409
+
+→ 20 Listar mis consultas (unión $in + Map)
+  GET http://localhost:3000/api/consultations [200 OK, 870B, 22ms]
+  √  Status 200
+  √  Solo mis consultas, con datos de MongoDB unidos
+
+→ 21 Dueño 2 lee la consulta del dueño 1 → 403
+  GET http://localhost:3000/api/consultations/13 [403 Forbidden, 290B, 5ms]
+  √  Status 403
+
+→ 22 Crear nota de seguimiento → 201
+  POST http://localhost:3000/api/notes [201 Created, 570B, 7ms]
+  √  Status 201
+  √  petName y species copiados de PostgreSQL (no del body)
+  √  userId sale del JWT
+  √  treatment copiado de la consulta
+
+→ 23 Segunda nota el mismo día → 409
+  POST http://localhost:3000/api/notes [409 Conflict, 321B, 7ms]
+  √  Índice único consultationId + noteDay → 409
+
+→ 24 Nota de consulta inexistente → 404
+  POST http://localhost:3000/api/notes [404 Not Found, 275B, 4ms]
+  √  Status 404
+
+→ 25 Nota del dueño 2 en consulta ajena → 403
+  POST http://localhost:3000/api/notes [403 Forbidden, 305B, 6ms]
+  √  Status 403
+
+→ 26 Listar notas (populate + orden)
+  GET http://localhost:3000/api/notes?consultationId=13&sort=-createdAt [200 OK, 681B, 15ms]
+  √  Status 200
+  √  populate trae el nombre del tratamiento
+
+→ 27 Estadística del tratamiento (aggregate)
+  GET http://localhost:3000/api/treatments/6b045b51132ae14676ce9228/stats [200 OK, 421B, 9ms]
+  √  Status 200
+  √  Conteo y promedio por estado
+
+→ 28 Borrar tratamiento en uso → 409
+  DELETE http://localhost:3000/api/treatments/6b045b51132ae14676ce9228 [409 Conflict, 310B, 7ms]
+  √  Status 409 (PostgreSQL lo usa)
+
+→ 29 Suspender tratamiento de la consulta → 200
+  PATCH http://localhost:3000/api/consultations/13/treatment [200 OK, 505B, 10ms]
+  √  Status 200
+  √  Consulta sin tratamiento
+
+→ 30 Borrar tratamiento A → 200 con cascada
+  DELETE http://localhost:3000/api/treatments/6b045b51132ae14676ce9228 [200 OK, 276B, 9ms]
+  √  Status 200
+  √  Borra en cascada su nota
+
+→ 31 Notas de la consulta tras la cascada
+  GET http://localhost:3000/api/notes?consultationId=13 [200 OK, 256B, 4ms]
+  √  Ya no quedan notas
+
+→ 32 Borrar consulta → 200
+  DELETE http://localhost:3000/api/consultations/13 [200 OK, 266B, 11ms]
+  √  Status 200
+
+→ 33 Borrar tratamiento B → 200
+  DELETE http://localhost:3000/api/treatments/6b045b51132ae14676ce9229 [200 OK, 276B, 8ms]
+  √  Status 200
+
+→ 34 Borrar tratamiento A otra vez → 404
+  DELETE http://localhost:3000/api/treatments/6b045b51132ae14676ce9228 [404 Not Found, 279B, 4ms]
+  √  Status 404
+
+┌─────────────────────────┬───────────────────┬──────────────────┐
+│                         │          executed │           failed │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              iterations │                 1 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│                requests │                35 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│            test-scripts │                35 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│      prerequest-scripts │                 1 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              assertions │                55 │                0 │
+├─────────────────────────┴───────────────────┴──────────────────┤
+│ total run duration: 3.4s                                       │
+├────────────────────────────────────────────────────────────────┤
+│ total data received: 7.23kB (approx)                           │
+├────────────────────────────────────────────────────────────────┤
+│ average response time: 16ms [min: 2ms, max: 114ms, s.d.: 27ms] │
+└────────────────────────────────────────────────────────────────┘
