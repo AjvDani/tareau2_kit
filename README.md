@@ -1,6 +1,6 @@
 # Tarea U2 · Caso 7 Veterinaria · PostgreSQL + MongoDB
 
-**Estudiante:** José Villa · **Caso:** 7 · Veterinaria · [Video de sustentación](https://drive.google.com/file/d/1vN2-40DsPz_SI3ChwxEqr2ErIWJA84wm/view?usp=sharing)
+**Estudiante:** José Villa · **Caso:** 7 · Veterinaria · Video de sustentación: [YouTube](https://youtu.be/RyfC6kDEQz4) · [Google Drive](https://drive.google.com/file/d/1vN2-40DsPz_SI3ChwxEqr2ErIWJA84wm/view?usp=sharing)
 
 API REST en Express que combina **PostgreSQL (Prisma 7)** y **MongoDB (Mongoose 9)**.
 Parte del proyecto de clase [`espe-expressjs`](https://github.com/paulosk8/espe-expressjs) (Express, Prisma y login con JWT).
@@ -69,7 +69,7 @@ se puede correr varias veces seguidas. Desde consola: `npm run test:postman`. Sa
 
 ## Evidencia
 
-- **Video de sustentación:** https://drive.google.com/file/d/1vN2-40DsPz_SI3ChwxEqr2ErIWJA84wm/view?usp=sharing
+- **Video de sustentación:** https://youtu.be/RyfC6kDEQz4 (YouTube, no listado) · copia en Google Drive: https://drive.google.com/file/d/1vN2-40DsPz_SI3ChwxEqr2ErIWJA84wm/view?usp=sharing
   (workload y decisión de base · `POST /api/notes` en el código y en Postman · qué pasa si una base falla a la mitad).
 - `docs/postman_run.png` y `docs/postman_run_order.png`: Run collection en Postman (55 de 55 aserciones).
 - `docs/compass_colecciones.png`, `docs/compass_followupnotes.png` y `docs/compass_indices.png`: colecciones
